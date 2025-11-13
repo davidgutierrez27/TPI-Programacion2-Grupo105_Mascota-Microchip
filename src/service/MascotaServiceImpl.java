@@ -28,7 +28,7 @@ public class MascotaServiceImpl implements MascotaService {
     /** DAOs utilizados para persistencia */
     private final MascotaDAO mascotaDAO = new MascotaDAOImpl();
     private final MicrochipDAO chipDAO = new MicrochipDAOImpl();
-
+  
     @Override
     public Mascota insertar(Mascota m) throws Exception {
         validate(m);

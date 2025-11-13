@@ -26,9 +26,10 @@ public final class MenuDisplay {
         System.out.println("2. Listar mascotas");
         System.out.println("3. Buscar por ID");
         System.out.println("4. Buscar por nombre");
-        System.out.println("5. Actualizar mascota");
+        System.out.println("5. Actualizar mascota (NO asocia)");
         System.out.println("6. Eliminar mascota (soft)");
-        System.out.println("7. Volver");
+        System.out.println("7. Asociar / Desasociar Microchip");
+        System.out.println("8. Volver");
         System.out.print("Opción: ");
     }
 

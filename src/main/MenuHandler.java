@@ -48,7 +48,8 @@ public class MenuHandler {
                 case "4" -> buscarMascotaPorNombre();
                 case "5" -> actualizarMascota();
                 case "6" -> eliminarMascota();
-                case "7" -> { return; }
+                case "7" -> asociarMicrochip();
+                case "8" -> { return; }
                 default -> System.out.println("Opción inválida");
             }
         }
@@ -196,7 +197,7 @@ public class MenuHandler {
             System.out.print("Dueño (" + m.getDuenio() + "): ");
             String duenio = scanner.nextLine();
             if (!duenio.isBlank()) m.setDuenio(duenio);
-
+                    
             mascotaService.actualizar(m);
 
             System.out.println("✅ Mascota actualizada");
@@ -206,6 +207,56 @@ public class MenuHandler {
         }
     }
 
+     private void asociarMicrochip() {
+        try {
+            System.out.print("ID de mascota: ");
+            Long id = Long.parseLong(scanner.nextLine());
+
+            Mascota m = mascotaService.getById(id);
+            if (m == null) {
+                System.out.println("Mascota no encontrada");
+                return;
+            }
+
+            System.out.println("Masconta encontrada:");
+
+            System.out.println("Nombre (" + m.getNombre() + "): ");
+
+            System.out.println("Especie (" + m.getEspecie() + "): ");
+
+            System.out.println("Raza (" + m.getRaza() + "): ");
+
+            System.out.println("Fecha nacimiento (" + m.getFechaNacimiento() + "): ");
+
+            System.out.println("Dueño (" + m.getDuenio() + "): ");
+            
+            // ¿Microchip?
+            System.out.print("¿Tiene microchip Disponible? (s/n): ");
+            String tieneChip = scanner.nextLine().trim().toLowerCase();
+            
+            Microchip chip = null;
+
+            if (tieneChip.equals("s")) {
+                System.out.print("Código del chip: ");
+                String codigo = scanner.nextLine();
+                chip = microchipService.getByCodigo(codigo);
+               
+                if (chip == null) {
+                    System.out.println("El microchip no existe. Debe registrarlo primero.");
+                    return;
+                }
+            }
+            
+            m.setMicrochip(chip);
+            mascotaService.actualizar(m);
+
+            System.out.println("✅ Mascota asociada");
+
+        } catch (Exception e) {
+            System.out.println("❌ Error: " + e.getMessage());
+        }
+       
+    }
     
     private void eliminarMascota() {
         try {
@@ -220,7 +271,6 @@ public class MenuHandler {
         }
     }
 
-    
     
     // ---------------------------------------------------------------------
     // MICROCHIP
@@ -341,5 +391,6 @@ public class MenuHandler {
             System.out.println("❌ Error: " + e.getMessage());
         }
     }
+    
 }
 

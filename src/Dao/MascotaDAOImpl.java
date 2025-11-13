@@ -91,7 +91,7 @@ public class MascotaDAOImpl implements MascotaDAO {
             }
         }
     }
-
+    
     @Override
     public Mascota leer(Long id, Connection conn) throws Exception {
         try (PreparedStatement stmt = conn.prepareStatement(SELECT_BY_ID_SQL)) {

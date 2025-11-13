@@ -24,7 +24,7 @@ public class MicrochipServiceImpl implements MicrochipService {
 
     /** DAO concreto para acceso a datos */
     private final MicrochipDAO chipDAO = new MicrochipDAOImpl();
-
+   
     @Override
     public Microchip insertar(Microchip m) throws Exception {
         validate(m);
@@ -63,7 +63,7 @@ public class MicrochipServiceImpl implements MicrochipService {
             return chipDAO.leer(id, tx.getConnection());
         }
     }
-
+    
     @Override
     public List<Microchip> getAll() throws Exception {
         try (TransactionManager tx = new TransactionManager()) {
