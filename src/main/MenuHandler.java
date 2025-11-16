@@ -9,8 +9,10 @@ import service.MicrochipService;
 import service.MicrochipServiceImpl;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 
 /***********************************************
@@ -99,20 +101,33 @@ public class MenuHandler {
             System.out.print("Dueño: ");
             String duenio = scanner.nextLine();
 
-            // ¿Microchip?
+             // ---- MICROCHIP ----
+            Microchip chip = null;
+
             System.out.print("¿Tiene microchip? (s/n): ");
             String tieneChip = scanner.nextLine().trim().toLowerCase();
 
-            Microchip chip = null;
-
             if (tieneChip.equals("s")) {
+
                 System.out.print("Código del chip: ");
-                String codigo = scanner.nextLine();
+                String codigo = scanner.nextLine().trim();
+
+                // 1) Buscar chip
                 chip = microchipService.getByCodigo(codigo);
 
+                // 2) Si NO existe → registrarlo de forma normal
                 if (chip == null) {
-                    System.out.println("El microchip no existe. Debe registrarlo primero.");
-                    return;
+                    System.out.println("⚠ El microchip no existe. Debe registrarlo ahora.");
+
+                    registrarMicrochip();   // → pide datos, inserta correctamente
+
+                    // 3) Volvemos a buscarlo
+                    chip = microchipService.getByCodigo(codigo);
+
+                    if (chip == null) {
+                        System.out.println("❌ Error: el microchip no fue creado.");
+                        return;
+                    }
                 }
             }
 
@@ -207,56 +222,108 @@ public class MenuHandler {
         }
     }
 
-     private void asociarMicrochip() {
-        try {
-            System.out.print("ID de mascota: ");
-            Long id = Long.parseLong(scanner.nextLine());
+    
+    
+    private void asociarMicrochip() {
+    try {
+        System.out.print("ID de mascota: ");
+        Long id = Long.parseLong(scanner.nextLine());
 
-            Mascota m = mascotaService.getById(id);
-            if (m == null) {
-                System.out.println("Mascota no encontrada");
-                return;
+        Mascota m = mascotaService.getById(id);
+        if (m == null) {
+            System.out.println("❌ Mascota no encontrada");
+            return; //retorna sin hacer commit ni rolback no se ejecuta service ni Dao
+        }
+
+        System.out.println("\nMascota encontrada:");
+        System.out.println("Nombre: " + m.getNombre());
+        System.out.println("Especie: " + m.getEspecie());
+        System.out.println("Raza: " + m.getRaza());
+        System.out.println("Fecha nacimiento: " + m.getFechaNacimiento());
+        System.out.println("Dueño: " + m.getDuenio());
+
+        System.out.println("Microchip asignado: " +
+                (m.getMicrochip() != null ? m.getMicrochip().getCodigo() : "(NINGUNO)"));
+
+        
+        // Menu
+        String opcion = "";
+        Set<String> opcionesValidas = new HashSet<>();
+
+        while (true) {
+
+            System.out.println("\nSeleccione una opción:");
+
+            // Construimos dinámicamente las opciones válidas
+            opcionesValidas.clear();
+            opcionesValidas.add("0");  // Volver siempre existe
+
+            if (m.getMicrochip() == null) {
+                System.out.println("1) Asignar microchip");
+                opcionesValidas.add("1");
+            } else {
+                System.out.println("1) Reasignar microchip"); 
+                System.out.println("2) Eliminar asignación");
+                opcionesValidas.add("1");
+                opcionesValidas.add("2");
             }
 
-            System.out.println("Masconta encontrada:");
+            System.out.println("0) Volver atrás");
 
-            System.out.println("Nombre (" + m.getNombre() + "): ");
+            System.out.print("Opción: ");
+            opcion = scanner.nextLine().trim();
 
-            System.out.println("Especie (" + m.getEspecie() + "): ");
+            if (opcionesValidas.contains(opcion)) {
+                break; // salida válida del menú
+            }
 
-            System.out.println("Raza (" + m.getRaza() + "): ");
+            System.out.println("⚠ Opción inválida. Intente nuevamente.");
+        }
 
-            System.out.println("Fecha nacimiento (" + m.getFechaNacimiento() + "): ");
 
-            System.out.println("Dueño (" + m.getDuenio() + "): ");
+        Microchip nuevoChip = null;
+
+        // OPCIÓN 3 → SALIR 
+        if (opcion.equals("0")) {
+            System.out.println("↩ No se realizaron cambios.");
+            return; //retorna sin hacer commit ni rolback no se ejecuta service ni Dao
+        }
+
+        // OPCIÓN 2 → DESASIGNAR MICROCHIP 
+        if (opcion.equals("2")) {
+            m.setMicrochip(nuevoChip);
+            mascotaService.actualizar(m);   // ← COMMIT 
+            System.out.println("✅ Asignación eliminada.");
+            return; //retorna pero ya habremos hecho commit en dao
+        }
+
+            // OPCIÓN 1 → ASIGNAR / REASIGNAR
+            System.out.print("Código del microchip: ");
+            String codigoChip = scanner.nextLine().trim();
             
-            // ¿Microchip?
-            System.out.print("¿Tiene microchip Disponible? (s/n): ");
-            String tieneChip = scanner.nextLine().trim().toLowerCase();
-            
-            Microchip chip = null;
-
-            if (tieneChip.equals("s")) {
-                System.out.print("Código del chip: ");
-                String codigo = scanner.nextLine();
-                chip = microchipService.getByCodigo(codigo);
-               
-                if (chip == null) {
-                    System.out.println("El microchip no existe. Debe registrarlo primero.");
-                    return;
-                }
+            //VALIDACIÓN si existe
+            nuevoChip = microchipService.getByCodigo(codigoChip);
+            if (nuevoChip == null) {
+                System.out.println("❌ El microchip no existe. Debe registrarlo primero.");
+                return; //retorna sin hacer commit ni rolback no se ejecuta service ni Dao
             }
             
-            m.setMicrochip(chip);
-            mascotaService.actualizar(m);
+            // VALIDACIÓN futura: Si Microchip esta usado por otra mascota 
+            //buscarMascotaPorMicrochip(nuevoChip.getId()); 
+          
 
-            System.out.println("✅ Mascota asociada");
+            m.setMicrochip(nuevoChip);
+            mascotaService.actualizar(m); // ← COMMIT
+
+            System.out.println("✅ Microchip asignado:");
+            System.out.println("Mascota: " + m.getNombre() + " → Chip: " + nuevoChip.getCodigo());
 
         } catch (Exception e) {
             System.out.println("❌ Error: " + e.getMessage());
+            // Aquí SI hay rollback si el DAO lo hace
         }
-       
     }
+
     
     private void eliminarMascota() {
         try {
@@ -272,10 +339,17 @@ public class MenuHandler {
     }
 
     
+    
+    
+    
+    
+    
+    
+    
     // ---------------------------------------------------------------------
     // MICROCHIP
     // ---------------------------------------------------------------------
-
+  
     private void registrarMicrochip() {
         try {
             System.out.println("\n--- Registrar Microchip ---");

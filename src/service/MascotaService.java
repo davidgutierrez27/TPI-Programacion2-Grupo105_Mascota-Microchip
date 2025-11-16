@@ -23,14 +23,9 @@ public interface MascotaService extends GenericService<Mascota> {
 
     // Búsqueda por coincidencia parcial de nombre
     List<Mascota> buscarPorNombre(String like) throws Exception;
-
     
-    /**
-     * Inserta una mascota junto con su microchip (si trae uno).
-     *
-     * Ambas operaciones ocurren dentro de la misma transacción.
-     * Si algo falla, se revierte todo.
-     */
+    
+    // Inserta una mascota junto con su microchip (si trae uno).
     Mascota insertarConChip(Mascota mascota) throws Exception;
 }
 

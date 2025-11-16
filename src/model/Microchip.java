@@ -75,7 +75,7 @@ public class Microchip {
 
     public String getObservaciones() { return observaciones; }
     public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
-
+    
     @Override
     public String toString() {
         return "Microchip{" +
