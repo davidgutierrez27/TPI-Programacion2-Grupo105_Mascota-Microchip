@@ -83,15 +83,19 @@ El proyecto utiliza una base MySQL denominada:
 
 Se incluyen dos archivos SQL (crear y poblar):
 
-1. **DDL.sql**
+1. **Creacion de BaseDatos.sql**
    - CREATE DATABASE
    - CREATE TABLE Mascota, Microchip
    - Clave foránea única para relación 1→1
    - Constraints (UNIQUE, CHECK, NOT NULL)
 
-2. **INSERTS.sql**
+2. **Carga de datos,sql**
    - Datos de prueba para ambas tablas
 
+SE INCLUYEN OTROS ARCHIVOS
+consultas1.sql (consultas del tp programacion)
+consultas2.sql (consultas avanzadas tp base de datos) 
+seguridad integridad.sql 
 
 
 Conexión a MySQL
@@ -165,11 +169,7 @@ Requisitos previos
 
 Video
 -----
-- Presentación de los 4 integrantes
-- Flujo CRUD funcionando
-- Relación 1→1 en acción
-- Explicación del código (entities, dao, service, menú)
-- Ejemplo de rollback
+https://drive.google.com/file/d/1bTupfreiqeGDf-pKxu-VyR65P_owtvcX/view?usp=drive_link
 
 
 

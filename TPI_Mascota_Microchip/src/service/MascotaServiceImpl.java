@@ -63,21 +63,32 @@ public class MascotaServiceImpl implements MascotaService {
             throw e;  // rollback lo hace TransactionManager al cerrar
         }
     }
-
+   
     @Override
-    public Mascota actualizar(Mascota mascota) throws Exception {
-        if (mascota.getId() == null)
-            throw new IllegalArgumentException("ID requerido para actualizar");
+public Mascota actualizar(Mascota mascota) throws Exception {
+    // Verifica requerimientos básicos
+    if (mascota.getId() == null)
+        throw new IllegalArgumentException("ID requerido para actualizar");
 
-        validate(mascota);
+    // Validaciones de negocio
+    validate(mascota);
 
-        try (TransactionManager tx = new TransactionManager()) {
-            mascotaDAO.actualizar(mascota, tx.getConnection());
-            tx.commit();
-            return mascota;
-        }
+    // Inicio de la transacción: un try-with-resources  - autocommit en la conexión y expone el dao
+    try (TransactionManager tx = new TransactionManager()) {
+
+        // Exposición de la conexión al DAO:
+        mascotaDAO.actualizar(mascota, tx.getConnection());
+
+   
+        tx.commit();
+
+        // Retorna el objeto actualizado
+        return mascota;
     }
-
+    // Cierre de la conexión:
+    //   este paso se encarga de liberar/rollbackear la transacción en close().
+}
+    
     @Override
     public void eliminar(Long id) throws Exception {
         try (TransactionManager tx = new TransactionManager()) {

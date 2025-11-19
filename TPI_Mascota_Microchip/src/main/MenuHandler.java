@@ -179,49 +179,7 @@ public class MenuHandler {
         }
     }
 
-    
-    private void actualizarMascota() {
-        try {
-            System.out.print("ID de mascota: ");
-            Long id = Long.parseLong(scanner.nextLine());
-
-            Mascota m = mascotaService.getById(id);
-            if (m == null) {
-                System.out.println("Mascota no encontrada");
-                return;
-            }
-
-            System.out.println("Deje vacío para mantener valor actual:");
-
-            System.out.print("Nombre (" + m.getNombre() + "): ");
-            String nombre = scanner.nextLine();
-            if (!nombre.isBlank()) m.setNombre(nombre);
-
-            System.out.print("Especie (" + m.getEspecie() + "): ");
-            String especie = scanner.nextLine();
-            if (!especie.isBlank()) m.setEspecie(especie);
-
-            System.out.print("Raza (" + m.getRaza() + "): ");
-            String raza = scanner.nextLine();
-            if (!raza.isBlank()) m.setRaza(raza);
-
-            System.out.print("Fecha nacimiento (" + m.getFechaNacimiento() + "): ");
-            String fecha = scanner.nextLine();
-            if (!fecha.isBlank()) m.setFechaNacimiento(LocalDate.parse(fecha));
-
-            System.out.print("Dueño (" + m.getDuenio() + "): ");
-            String duenio = scanner.nextLine();
-            if (!duenio.isBlank()) m.setDuenio(duenio);
-                    
-            mascotaService.actualizar(m);
-
-            System.out.println("✅ Mascota actualizada");
-
-        } catch (Exception e) {
-            System.out.println("❌ Error: " + e.getMessage());
-        }
-    }
-
+   
     
     
     private void asociarMicrochip() {
@@ -313,7 +271,7 @@ public class MenuHandler {
           
 
             m.setMicrochip(nuevoChip);
-            mascotaService.actualizar(m); // ← COMMIT
+            mascotaService.actualizar(m); // ← COMMIT 
 
             System.out.println("✅ Microchip asignado:");
             System.out.println("Mascota: " + m.getNombre() + " → Chip: " + nuevoChip.getCodigo());
@@ -321,6 +279,48 @@ public class MenuHandler {
         } catch (Exception e) {
             System.out.println("❌ Error: " + e.getMessage());
             // Aquí SI hay rollback si el DAO lo hace
+        }
+    }
+
+        private void actualizarMascota() {
+        try {
+            System.out.print("ID de mascota: ");
+            Long id = Long.parseLong(scanner.nextLine());
+
+            Mascota m = mascotaService.getById(id);
+            if (m == null) {
+                System.out.println("Mascota no encontrada");
+                return;
+            }
+
+            System.out.println("Deje vacío para mantener valor actual:");
+
+            System.out.print("Nombre (" + m.getNombre() + "): ");
+            String nombre = scanner.nextLine();
+            if (!nombre.isBlank()) m.setNombre(nombre);
+
+            System.out.print("Especie (" + m.getEspecie() + "): ");
+            String especie = scanner.nextLine();
+            if (!especie.isBlank()) m.setEspecie(especie);
+
+            System.out.print("Raza (" + m.getRaza() + "): ");
+            String raza = scanner.nextLine();
+            if (!raza.isBlank()) m.setRaza(raza);
+
+            System.out.print("Fecha nacimiento (" + m.getFechaNacimiento() + "): ");
+            String fecha = scanner.nextLine();
+            if (!fecha.isBlank()) m.setFechaNacimiento(LocalDate.parse(fecha));
+
+            System.out.print("Dueño (" + m.getDuenio() + "): ");
+            String duenio = scanner.nextLine();
+            if (!duenio.isBlank()) m.setDuenio(duenio);
+                    
+            mascotaService.actualizar(m);
+
+            System.out.println("✅ Mascota actualizada");
+
+        } catch (Exception e) {
+            System.out.println("❌ Error: " + e.getMessage());
         }
     }
 
